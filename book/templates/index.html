@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row">
+  {% for book in books %}
+    <div class="col-md-3">
+      <a href="{% url 'book-detail' book.id %}">
+      <div>
+        <div>
+          <img src="{{ book.img_cover.url }}" width="200">
+        </div>
+        <div>
+          <h5>{{ book.title }}</h5>
+          <small class="text-muted">{{ book.author }}</small>
+          {% load humanize %}
+          <p><span>{{ book.price|intcomma }} đ<span>
+            {% if book.amount <= 0 %}
+            <span class="ml-auto alert">Tạm hết hàng</span>
+            {% endif %}
+          </p>
+        </div>
+    </div>
+  </a>
+  </div>
+  {% endfor %}
+</div>
+<div>
+  {% if page_range|length > 1%}
+  <ul class="pagination justify-content-center">
+    {% for page in page_range %}
+      {% if page == books.number %}
+        <li class="page-item active"><a class="page-link" href="?page={{ page }}">{{ page }}</a></li>
+      {% else %}
+        <li class="page-item"><a class="page-link" href="?page={{ page }}">{{ page }}</a></li>
+      {% endif %}
+    {% endfor %}
+  </ul>
+  {% endif %}
+</div>
+{% endblock %}
+  <!-- <form class="form-inline pagination" action="{% url 'homepage' %}" method="get">
+    {% for page in page_range %}
+      <input class="btn btn-default" name="page" value="{{ page }}" type="submit">
+    {% endfor %}
+  </form> -->

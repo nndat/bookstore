@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load humanize %}
+{% load mathfilters %}
+<table class="table">
+  <thead>
+    <tr>
+      <th>Sách</th>
+      <th>Đơn giá </th>
+      <th>Số lượng </th>
+      <th>Thành tiền: </th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for item in order_list %}
+  <tr>
+    <td><a href="{% url 'book-detail' book_id=item.book.id %}">{{ item.book.title }}</a></td>
+    <td>{{ item.book.price|intcomma }} đ</td>
+    <td>
+        <a href="{% url 'decrease-item' book_id=item.book.id %}"><button class="btn btn-secondary"> - </button></a>
+        <strong class="ml-1 mr-1">{{ item.amount }}</strong>
+        <a href="{% url 'increase-item' book_id=item.book.id %}"><button class="btn btn-danger"> + </button></a>
+    </td>
+    <td>{{ item.amount|mul:item.book.price|intcomma }} đ</td>
+    <td><a href="{% url 'remove-item' book_id=item.book.id %}"><i class="fas fa-trash-alt"></i></a></td>
+  </tr>
+  {% endfor %}
+  <tr>
+    <td></td>
+    <td></td>
+    <td>
+      <strong>Tổng Tiền: </strong>
+    </td>
+    <td><strong>{{ total|intcomma }} đ</strong></td>
+    {% if user.is_authenticated %}
+    <td><a href="{% url 'checkout' %}" class="btn btn-danger">Thanh toán</a></td>
+    {% else %}
+    <td><a href="{% url 'checkout' %}" class="btn btn-info">Đăng nhập để thanh toán</a></td>
+    {% endif %}
+  </tr>
+  </tbody>
+</table>
+{% endblock %}

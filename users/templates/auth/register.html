@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}<title>Đăng ký tài khoản</title>{% endblock %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div class="col-md-6">
+<form method="post">
+  {% csrf_token %}
+  <label for="username" class="form-control-label">Tên đăng nhập</label>
+  <input type="text" class="form-control" name="username">
+  {% for error in form.username.errors %}
+      <p class="text-danger">{{ error }}</p>
+  {% endfor %}
+  <label for="password1" class="form-control-label">Mật khẩu</label>
+  <input type="password" class="form-control" name="password1">
+  {% for error in form.password1.errors %}
+      <p class="text-danger">{{ error }}</p>
+  {% endfor %}
+  <label for="password2" class="form-control-label">Xác nhận mật khẩu</label>
+  <input type="password" class="form-control" name="password2">
+  {% for error in form.password2.errors %}
+      <p class="text-danger">{{ error }}</p>
+  {% endfor %}
+  <button class="btn btn-primary mt-2" type="submit">Tạo tài khoản</button>
+</form>
+</div>
+
+{% endblock %}

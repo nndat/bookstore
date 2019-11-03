@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% block title %}<title>{{ book.title }}</title>{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-1">
+      <img src="{{ book.img_cover.url }}">
+    </div>
+    <div class="col-8 ml-auto">
+      <h5>{{ book.title }}</h5>
+      <p class="text-muted">Tác giả: {{ book.author }}</p>
+      <div class="mt-1 mb-2">
+        {% if rating %}<strong>{{ rating }}</strong>{% endif %}
+          {% for _ in '12345' %}
+            {%if forloop.counter <= rating %}
+                <span class="fa fa-star" style="color: orange"></span>
+            {% else %}
+                <span class="far fa-star"></span>
+            {% endif %}
+          {% endfor %}
+            <a class="ml-3" href="#reviews">Xem nhận xét</a>
+      </div>
+      {% load humanize %}
+      <strong>{{ book.price|intcomma }}đ</strong>
+      {% if book.amount <= 0 %}
+        <button class="btn btn-danger ml-2 disabled">Chọn Mua</button>
+        <span class="alert alert-secondary">Tạm hết hàng</span>
+      {% else %}
+      <form action="{% url 'add-item' book_id=book.id %}" method="post">
+          {% csrf_token %}
+          <button class="btn btn-danger ml-2" type="submit">Chọn Mua</button>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+  <br>
+  <div class="row">
+    <div class="container text-justify">
+    <h5><strong>Giới thiệu sách</strong></h5>
+    <p>{{ book.description }}</p>
+  </div>
+  </div>
+  <div class=container>
+  <form action="{% url 'reviewbook' book_id=book.id %}" method='post'>
+      {% csrf_token %}
+    <h5 class="form-group-label"><strong>Viết nhận xét về sách: {{ book.title }}<strong></h5>
+    <label for="rating">Đánh giá: </label>
+    <select data-type="range" name="rating" required>
+      <option>5</option>
+      <option>4</option>
+      <option>3</option>
+      <option>2</option>
+      <option>1</option>
+    </select>
+    <input class="form-control mt-3" type="text" name="title" placeholder="Title">
+    <textarea  class="form-control mt-3" name="comment" placeholder="Nhận xét cho sách: {{ book.title }}"></textarea>
+    {% if user.is_authenticated %}
+      <button class="btn btn-primary mt-2 mb-3" type="submit">Gửi nhận xét</button>
+    {% else %}
+      <button class="btn btn-info mt-2 mb-3" type="submit">Hãy đăng nhập để có thể nhận xét về cuốn sách này.</a>
+    {% endif %}
+  </form>
+</div>
+<div class="container" id="reviews">
+  <ul class="list-group">
+  {% for review in reviews %}
+  <li class="list-group-item">
+      <p>
+          <strong>{{ review.user.username }}: </strong>
+          {% for _ in '12345' %}
+            {%if forloop.counter <= review.rating %}
+                <span class="fa fa-star" style="color: orange"></span>
+            {% else %}
+                <span class="far fa-star"></span>
+            {% endif %}
+          {% endfor %}
+          {% if review.title %}{{ review.title }}{% endif %}
+      </p>
+      {% if review.comment %}
+          <p>{{ review.comment}}</p>
+      {% endif %}
+  </li>
+  {% endfor %}
+</ul>
+</div>
+</div>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load humanize %}
+{% load mathfilters %}
+<h3>Chi tiết hóa đơn</h3>
+<table class="table">
+  <thead>
+    <tr>
+      <th>Sách</th>
+      <th>Đơn giá </th>
+      <th>Số lượng </th>
+      <th>Thành tiền: </th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for item in order_list %}
+  <tr>
+    <td><a href="{% url 'book-detail' book_id=item.book.id %}">{{ item.book.title }}</a></td>
+    <td>{{ item.book.price|intcomma }} đ</td>
+    <td>
+        <a href="{% url 'decrease-item' book_id=item.book.id %}"><button class="btn btn-secondary"> - </button></a>
+        <strong class="ml-1 mr-1">{{ item.amount }}</strong>
+        <a href="{% url 'increase-item' book_id=item.book.id %}"><button class="btn btn-danger"> + </button></a>
+    </td>
+    <td>{{ item.amount|mul:item.book.price|intcomma }} đ</td>
+  </tr>
+  {% endfor %}
+  <tr>
+      <td></td>
+      <td></td>
+      <td>
+        <strong>Tổng Tiền: </strong>
+      </td>
+      <td><strong>{{ total|intcomma }} đ</strong></td>
+  </tr>
+  </tbody>
+</table>
+
+  <h3>Thông tin khách hàng</h3>
+  <form method="post">
+    {% csrf_token %}
+    <lable for="name" class="form-control-label">Họ tên: </label>
+    <input type="text" class="form-control" name='name' required>
+    <lable for="phone" class="form-control-label">Điện thoại: </label>
+    <input type="text" class="form-control" name='phone' required>
+    <lable for="address" class="form-control-label">Địa chỉ: </label>
+    <input type="text" class="form-control" name='address' required>
+    <button type="submit" class="btn btn-danger mt-2">Xác nhận thanh toán</button>
+  </form>
+{% endblock %}

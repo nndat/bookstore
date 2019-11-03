@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}<title>Đăng nhập</title>{% endblock %}
+{% block content %}
+  <div class="row">
+      <!-- Login form here -->
+      <div class="col-3">
+      </div>
+      {% load crispy_forms_tags %}
+      <form method="post" class="col">
+        {% csrf_token %}
+        <label for="username" class="form-control-label">Tên đăng nhập </label>
+        <input type="text" name="username" class="form-control" required>
+        <label for="password" class="form-control-label">Mật khẩu </label>
+        <input type="password" name="password" class="form-control" required>
+        <button type="submit" class="btn btn-primary mt-2">Đăng nhập </button>
+      </form>
+      <div class="col-3">
+      </div>
+  </div>
+{% endblock %}
