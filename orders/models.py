@@ -2,6 +2,16 @@ from django.db import models
 from book.models import Book
 from django.contrib.auth.models import User
 
+from datetime import datetime
+import secrets
+
+
+ORDER_STATUS = [
+    ('checking', 'Đang kiểm tra'),
+    ('shipping', 'Đang giao hàng'),
+    ('finished', 'Giao hàng thành công'),
+]
+
 
 class Item(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
@@ -51,3 +61,22 @@ class OrderList(models.Model):
         item = self.items.filter(book=book).first()
         if item:
             item.delete()
+
+
+class Bill(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    fullname = models.CharField(max_length=100)
+    address = models.CharField(max_length=255)
+    phone = models.CharField(max_length=20)
+    total = models.IntegerField(default=0)
+    date = models.DateTimeField(default=datetime.now, blank=True)
+    status = models.CharField(choices=ORDER_STATUS,
+                              max_length=10, default='checking')
+    code = models.CharField(default=secrets.token_urlsafe(12), max_length=20)
+
+
+class BillItem(models.Model):
+    title = models.CharField(max_length=255)
+    price = models.IntegerField()
+    amount = models.IntegerField()
+    bill = models.ForeignKey(Bill, on_delete=models.CASCADE)

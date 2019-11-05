@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load humanize %}
+<div>
+<table class="table">
+  <tr>
+    <td>Mã đơn hàng:</td> <td>{{ bill.code }}</td>
+  </tr>
+    <td>Trạng thái đơn hàng: </td><td>{{ code }}</td>
+  </tr>
+    <td>Ngày đặt hàng:</td><td> {{ bill.date }}</td>
+  </tr>
+  <tr>
+</table>
+</div>
+<div class="mt-5">
+  <h3>Thông tin khách hàng</h3>
+  <table class="table">
+    <tbody>
+      <tr>
+        <td><strong>Họ tên:</td>
+        <td>{{ bill.fullname }}</td>
+      </tr>
+      <tr>
+        <td><strong>Địa chỉ nhận hàng:</td>
+        <td>{{ bill.address }}</td>
+      </tr>
+      <tr>
+        <td><strong>Điện thoại:</td>
+        <td>{{ bill.phone }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<div class="mt-3">
+  <h3>Chi tiết đơn hàng </h3>
+  <table class="table">
+    <thead>
+      <tr>
+        <td>Tên sách </td>
+        <td>Đơn giá</td>
+        <td>Số lượng</td>
+      </tr>
+    </thead>
+    <tbody>
+      {% for book in books %}
+        <tr>
+          <td>{{ book.title }}</td>
+          <td>{{ book.price|intcomma }}đ</td>
+          <td>{{ book.amount }}</td>
+        </tr>
+      {% endfor %}
+        <tr>
+            <td></td>
+            <td>Tổng thanh toán</td>
+            <td>{{ bill.total|intcomma }}đ</td>
+        </tr>
+    </tbody>
+  </table>
+</div>
+{% endblock %}

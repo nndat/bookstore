@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}<title>{{ user.username }}</title>{% endblock %}
+
+{% block content %}
+<table class="table">
+  <tbody>
+    <tr>
+      <td><strong>Họ tên:</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><strong>Địa chỉ:</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><strong>Điện thoại:</td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>Danh sách các đơn hàng </h3>
+<ul class="list-group">
+  {% for bill in bills %}
+      <a href="{% url 'show-bill' bill_id=bill.id %}" class="list-group-item">Đơn hàng {{ bill.code }}</a>
+  {% endfor %}
+</ul>
+
+
+{% endblock %}

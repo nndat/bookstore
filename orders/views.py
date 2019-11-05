@@ -2,7 +2,7 @@ from django.shortcuts import redirect, render
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
-from orders.models import OrderList
+from orders.models import OrderList, Bill
 from orders.untils import update_total
 
 
@@ -79,7 +79,38 @@ def decrease(request, book_id):
 @login_required
 def checkout(request):
     if request.method == 'POST':
+        fullname = request.POST.get('fullname')
+        address = request.POST.get('address')
+        phone = request.POST.get('phone')
+        if not (fullname and address and phone):
+            messages.info(request, 'Thông tin nhận hàng chưa chính xác. '
+                                   'Bạn vui lòng kiểm tra lại')
+            return redirect('checkout')
+        bill = Bill(
+            fullname=fullname,
+            address=address,
+            phone=phone,
+            status='checking',
+            user=request.user
+        )
+        order_id = request.session.get('order_id')
+        order_list = OrderList.objects.filter(id=order_id).first()
+        order = order_list.items.all()
+        total = 0
+        for item in order:
+            total += item.amount * item.book.price
+        bill.total = total
+        bill.save()
+        for item in order:
+            bill.billitem_set.create(
+                title=item.book.title,
+                price=item.book.price,
+                amount=item.amount
+            )
+            item.delete()
+        bill.save()
         messages.success(request, 'Bạn đã đặt hàng thành công')
+        update_total(request)
         return redirect('homepage')
     order_id = request.session.get('order_id')
     order_list = OrderList.objects.filter(id=order_id).first()
@@ -93,3 +124,14 @@ def checkout(request):
 
     return render(request, 'orders/checkout.html',
                   {'order_list': order, 'total': total})
+
+
+@login_required
+def show_bill(request, bill_id):
+    bill = request.user.bill_set.filter(id=bill_id).first()
+    context = {
+        'bill': bill,
+        'code': bill.get_status_display(),
+        'books': bill.billitem_set.all()
+    }
+    return render(request, 'orders/bill.html', context)

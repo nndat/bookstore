@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.decorators import login_required
 
 from orders.models import OrderList
 from orders.untils import update_total
@@ -53,3 +54,11 @@ def logout_view(request):
     logout(request)
     messages.success(request, 'Bạn đã đăng xuất')
     return redirect('homepage')
+
+
+@login_required
+def profile(request):
+    context = {
+        'bills': request.user.bill_set.all()
+    }
+    return render(request, 'auth/profile.html', context)
